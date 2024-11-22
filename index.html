@@ -1,0 +1,246 @@
+<!doctype html>
+<html>
+  <head>
+    <title>WebRTC Room</title>
+    <!-- <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    /> -->
+    <!-- <link rel="stylesheet" href="./public/css/style.css" /> -->
+    <link rel="stylesheet" href="./public/css/output.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet" />
+    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+    <!-- <style>
+      .control-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+      }
+      .control-buttons button {
+        flex: 1;
+        margin: 0 5px;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      #chat {
+        border-left: 1px solid #ddd;
+        padding-left: 15px;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        padding-bottom: 1rem;
+      }
+      #messages {
+        flex: 1;
+        overflow-y: auto;
+        margin-bottom: 10px;
+      }
+      #inputContainer {
+        margin-top: 10px;
+      }
+      .center-vertical {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        height: 100vh;
+      }
+      .select-row {
+        display: flex;
+        justify-content: space-between;
+      }
+      .select-row .form-group {
+        flex: 1;
+        margin-right: 10px;
+      }
+      .select-row .form-group:last-child {
+        margin-right: 0;
+      }
+      .chat-bubble {
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 10px;
+        max-width: 80%;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .chat-bubble.left {
+        background-color: #e9ecef;
+        align-self: flex-start;
+      }
+
+      .chat-bubble.right {
+        background-color: #007bff;
+        color: white;
+        align-self: flex-end;
+      }
+
+      .chat-bubble img {
+        border-radius: 5px;
+        margin-top: 5px;
+      }
+
+      .chat-bubble p {
+        margin: 0;
+      }
+    </style> -->
+    <style>
+      .chat-bubble {
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 10px;
+        max-width: 80%;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .chat-bubble.left {
+        background-color: #e9ecef;
+        align-self: flex-start;
+      }
+
+      .chat-bubble.right {
+        background-color: #007bff;
+        color: white;
+        align-self: flex-end;
+      }
+
+      .chat-bubble img {
+        border-radius: 5px;
+        margin-top: 5px;
+      }
+
+      .chat-bubble p {
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="min-h-screen bg-slate-50 p-8">
+      <div class="mx-auto flex w-[90%] justify-center gap-4">
+        <div id="video" class="w-max min-w-[800px]">
+          <div class="mb-4 flex justify-between">
+            <section>
+              <h1 class="text-lg font-bold capitalize text-gray-800" id="serviceName">Nama Konsultasi</h1>
+              <span class="block text-sm font-medium text-gray-600" id="consultationTimeRange">Waktu Mulai - Waktu Berakhir</span>
+              <p class="font-medium italic" id="ShowInformation">Keterangan Konsultasi</p>
+            </section>
+            <section></section>
+            <div class="">
+              <div class="flex items-center gap-2">
+                <button type="button" class="rounded bg-green-600 px-2 py-1 text-sm font-medium text-white transition duration-300 hover:bg-green-700" id="joinBtn">Join Room</button>
+                <button type="button" class="rounded bg-red-600 px-2 py-1 text-sm font-medium text-white transition duration-300 hover:bg-red-700" id="buttonLeave" onclick="leaveRoom()">Leave Room</button>
+                <div class="flex">
+                  <span id="timer" class="rounded-md bg-blue-500 px-3 py-1 text-sm font-semibold text-white shadow">00:00:00:00</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="flex min-h-[200px] w-max min-w-[400px] items-center gap-2 rounded bg-white p-4 shadow shadow-gray-300" id="videoContainer"></div>
+          <div class="mt-4 flex gap-3">
+            <div class="flex-1">
+              <label for="cameraSelect" class="mb-1 block text-sm font-medium text-gray-700">Pilih Kamera:</label>
+              <select id="cameraSelect" class="w-full rounded-lg border border-gray-300 bg-white p-2 text-sm shadow-sm transition focus:border-blue-500 focus:outline-none" onchange="changeCamera()"></select>
+            </div>
+            <div class="flex-1">
+              <label for="microphoneSelect" class="mb-1 block text-sm font-medium text-gray-700">Pilih Microphone:</label>
+              <select id="microphoneSelect" class="w-full rounded-lg border border-gray-300 bg-white p-2 text-sm shadow-sm transition focus:border-blue-500 focus:outline-none" onchange="changeMicrophone()"></select>
+            </div>
+          </div>
+          <div class="mt-6">
+            <label for="hasil-konsultasi" class="mb-2 block text-sm font-medium text-gray-700">Hasil Konsultasi</label>
+            <div id="hasil-konsultasi" class="h-[200px] rounded border border-gray-300 bg-white p-2"></div>
+
+            <button id="submitConsultationButton" class="mt-4 rounded bg-green-600 px-4 py-2 text-white transition duration-300 hover:bg-green-700" onclick="submitConsultation()">Submit Hasil Konsultasi</button>
+          </div>
+        </div>
+
+        <div id="chat" class="shadow-gray h-max max-w-[800px] flex-1 rounded bg-white p-4 shadow">
+          <div class="">
+            <ul id="messages" class="max-h-[500px] min-h-[400px] space-y-4 overflow-y-auto pr-2"></ul>
+            <form id="chatForm" class="mt-4 flex space-x-2">
+              <section class="flex flex-1 flex-col gap-2">
+                <input id="messageInput" type="text" class="rounded border border-gray-300 p-2 text-sm" placeholder="Type your message..." name="message" />
+                <input id="fileInput" type="file" class="rounded border border-gray-300 p-1 text-sm" name="file" />
+              </section>
+              <button id="sendButton" class="h-max rounded bg-blue-600 px-2 py-2 text-white" type="submit"><i class="fa-solid fa-paper-plane"></i></button>
+              <!-- <div id="inputContainer" class="input-group mt-2">
+                <div class="input-group-append">
+                </div>
+              </div>
+              <div id="fileUploadContainer" class="input-group mt-2">
+                <div class="input-group-append">
+                  <button id="uploadButton" class="btn btn-secondary" type="button">Upload</button>
+                </div>
+              </div> -->
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.8.0/socket.io.min.js" crossorigin="anonymous"></script>
+    <script src="./public/js/video.js"></script>
+    <script>
+      const parameter = new URLSearchParams(window.location.search);
+
+      const quill = new Quill("#hasil-konsultasi", {
+        theme: "snow",
+        placeholder: "Type your message here...",
+        modules: {
+          toolbar: [["bold", "italic", "underline", "strike"], [{ list: "ordered" }, { list: "bullet" }], [{ script: "sub" }, { script: "super" }], [{ color: [] }, { background: [] }], ["clean"]],
+        },
+      });
+
+      const savedData = localStorage.getItem("hasilKonsultasi");
+      if (savedData) {
+        quill.root.innerHTML = savedData;
+      }
+
+      quill.on("text-change", function () {
+        const content = quill.root.innerHTML;
+        localStorage.setItem("hasilKonsultasi", content);
+      });
+
+      async function submitConsultation() {
+        const data = localStorage.getItem("hasilKonsultasi");
+
+        if (!data) {
+          alert("Tidak ada data konsultasi untuk dikirim.");
+          return;
+        }
+
+        try {
+          const response = await fetch(`https://api.temanternak.h14.my.id/bookings/${parameter.get("id") || localStorage.getItem("id")}/consultations/result`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${parameter.get("token") || localStorage.getItem("token")}`,
+            },
+            body: JSON.stringify({ result: data }),
+          });
+
+          if (!response.ok) {
+            throw new Error("Gagal mengirim data. Silakan coba lagi.");
+          }
+
+          alert("Hasil konsultasi berhasil dikirim!");
+          localStorage.removeItem("hasilKonsultasi");
+          quill.root.innerHTML = "";
+        } catch (error) {
+          console.error("Error:", error);
+          alert("Terjadi kesalahan saat mengirim data.");
+        }
+      }
+    </script>
+
+    <!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script> 
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
+  </body>
+</html>
