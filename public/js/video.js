@@ -584,6 +584,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       clearInterval(interval);
       // timer.textContent = "EXPIRED";
       leaveRoom();
+      window.location.href = "https://app.temanternak.h14.my.id/layanan";
     }
   }, 1000);
 });
