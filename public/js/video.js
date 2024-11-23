@@ -113,9 +113,9 @@ async function joinRoom() {
     socket.emit("join-room", query.get("token"), query.get("id"));
 
     // Replace join button with leave button
-    const joinButton = document.getElementById("joinBtn");
-    joinButton.textContent = "Leave Room";
-    joinButton.onclick = leaveRoom;
+    // const joinButton = document.getElementById("joinBtn");
+    // joinButton.textContent = "Leave Room";
+    // joinButton.onclick = leaveRoom;
   } catch (err) {
     console.error("Error accessing media devices:", err);
   }
@@ -235,6 +235,7 @@ async function joinRoom() {
 
 async function leaveRoom() {
   console.log("Leave Room");
+  isJoined = false;
 
   // Close all peer connections
   if (socket) {
@@ -253,9 +254,9 @@ async function leaveRoom() {
   });
 
   // Replace leave button with join button
-  const joinButton = document.getElementById("joinBtn");
-  joinButton.textContent = "Join Room";
-  joinButton.onclick = joinRoom;
+  // const joinButton = document.getElementById("joinBtn");
+  // joinButton.textContent = "Join Room";
+  // joinButton.onclick = joinRoom;
 }
 
 async function changeMicrophone() {
@@ -490,19 +491,19 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (query.get("token")) {
     localStorage.setItem("token", query.get("token"));
   }
+  if (localStorage.getItem("isSubmitConsultation")) {
+    document.getElementById("submitConsultationButton").classList.add("hover:bg-gray-700");
+    document.getElementById("submitConsultationButton").classList.add("bg-gray-600");
+  } else {
+    document.getElementById("submitConsultationButton").classList.add("hover:bg-green-700");
+    document.getElementById("submitConsultationButton").classList.add("bg-green-600");
+   }
 
-  const joinButton = document.getElementById("joinBtn");
-  joinButton.onclick = joinRoom;
+  // const joinButton = document.getElementById("joinBtn");
+  // joinButton.onclick = joinRoom;
   document.getElementById("serviceName").innerText = consultation.serviceName;
   document.getElementById("consultationTimeRange").innerText = `${new Date(consultation.startTime).toLocaleString()} - ${new Date(consultation.endTime).toLocaleString()}`;
-  // document.getElementById("meeting-info").innerHTML = `
-  //   <h1>${consultation.serviceName}</h1>
-  //   <p>Dokter : ${consultation.veterinarianNameAndTitle}</p>
-  //   <p>Pelanggan : ${consultation.bookerName}</p>
-  //   <p>Waktu Mulai : ${new Date(consultation.startTime).toLocaleString()}</p>
-  //   <p>Waktu Selesai : ${new Date(consultation.endTime).toLocaleString()}</p>
-  //   <span id="timer" class="p-1 bg-danger" >00.00.00</span>
-  //     `;
+
   const timer = document.getElementById("timer");
   const countDownDate = new Date(consultation.endTime).getTime();
 
@@ -520,12 +521,56 @@ document.addEventListener("DOMContentLoaded", async () => {
       }
       if (distance <= 300) {
         document.getElementById("ShowInformation").innerText = "saat ini anda sudah bisa berkomunikasi Via chat, video akan ditampilkan saat waktu konsultasi dimulai";
+        if (isJoined) {
+          document.getElementById("chat").classList.remove("hidden");
+          document.getElementById("textEditor").classList.remove("hidden");
+        } else {
+          if (!document.getElementById("chat").classList.contains("hidden")) {
+            document.getElementById("chat").classList.add("hidden");
+          }
+          if (!document.getElementById("textEditor").classList.contains("hidden")) {
+            document.getElementById("textEditor").classList.add("hidden");
+          }
+        }
       }
+      if (!isJoined) {
+        document.getElementById("waitingRoomBefore").classList.remove("hidden");
+      } else {
+        if (!document.getElementById("waitingRoomBefore").classList.contains("hidden")) {
+          document.getElementById("waitingRoomBefore").classList.add("hidden");
+        }
+      }
+      if (!isJoined && distance <= 300) {
+        document.getElementById("buttonJoinRoom").classList.remove("hidden");
+      } else {
+        if (!document.getElementById("buttonJoinRoom").classList.contains("hidden")) {
+          document.getElementById("buttonJoinRoom").classList.add("hidden");
+        }
+      }
+      // if (!isJoined)
+
     } else {
       distance = countDownDate - now;
       document.getElementById("ShowInformation").innerText = "Konsultasi telah dimulai, pastikan mengirim hasil konsultasi sebelum waktu habis";
-      timer.classList.remove("bg-success");
-      timer.classList.add("bg-danger");
+      if (!isJoined) {
+        if (!document.getElementById("video").classList.contains("hidden")) {
+          document.getElementById("video").classList.add("hidden");
+        }
+        if (!document.getElementById("chat").classList.contains("hidden")) {
+          document.getElementById("chat").classList.add("hidden");
+        }
+        if (!document.getElementById("textEditor").classList.contains("hidden")) {
+          document.getElementById("textEditor").classList.add("hidden");
+        }
+        document.getElementById("waitingRoomAfter").classList.remove("hidden");
+      } else {
+        if (!document.getElementById("waitingRoomAfter").classList.contains("hidden")) {
+          document.getElementById("waitingRoomAfter").classList.add("hidden");
+        }
+        document.getElementById("chat").classList.remove("hidden");
+        document.getElementById("video").classList.remove("hidden");
+        document.getElementById("textEditor").classList.remove("hidden");
+      }
     }
 
     const days = Math.floor(distance / (1000 * 60 * 60 * 24));
