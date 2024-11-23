@@ -583,10 +583,6 @@ video {
   margin-top: 1.5rem;
 }
 
-.mt-2 {
-  margin-top: 0.5rem;
-}
-
 .block {
   display: block;
 }
@@ -630,10 +626,6 @@ video {
 
 .min-h-screen {
   min-height: 100vh;
-}
-
-.min-h-\[200px\] {
-  min-height: 200px;
 }
 
 .w-\[400px\] {
@@ -695,6 +687,10 @@ video {
 
 .gap-4 {
   gap: 1rem;
+}
+
+.gap-8 {
+  gap: 2rem;
 }
 
 .space-x-2 > :not([hidden]) ~ :not([hidden]) {
