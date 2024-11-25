@@ -505,6 +505,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("consultationTimeRange").innerText = `${new Date(consultation.startTime).toLocaleString()} - ${new Date(consultation.endTime).toLocaleString()}`;
 
   const timer = document.getElementById("timer");
+  const timerBefore = document.getElementById("timerBefore");
   const countDownDate = new Date(consultation.endTime).getTime();
 
   const interval = setInterval(() => {
@@ -579,6 +580,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
     timer.textContent = `${days.toString().padStart(2, "0")}:${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+    timerBefore.textContent = `${days.toString().padStart(2, "0")}:${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 
     if (distance < -10) {
       clearInterval(interval);
