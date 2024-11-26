@@ -520,17 +520,21 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (distance === 600000) {
         consultation = getConsultation();
       }
-      if (distance <= 300) {
+      if (distance / 1000 <= 300) {
         document.getElementById("ShowInformation").innerText = "saat ini anda sudah bisa berkomunikasi Via chat, video akan ditampilkan saat waktu konsultasi dimulai";
         if (isJoined) {
           document.getElementById("chat").classList.remove("hidden");
           document.getElementById("textEditor").classList.remove("hidden");
+          document.getElementById("consultation-informasion").classList.remove("hidden");
         } else {
           if (!document.getElementById("chat").classList.contains("hidden")) {
             document.getElementById("chat").classList.add("hidden");
           }
           if (!document.getElementById("textEditor").classList.contains("hidden")) {
             document.getElementById("textEditor").classList.add("hidden");
+          }
+          if (!document.getElementById("consultation-informasion").classList.contains("hidden")) {
+            document.getElementById("consultation-informasion").classList.add("hidden");
           }
         }
       }
@@ -541,7 +545,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           document.getElementById("waitingRoomBefore").classList.add("hidden");
         }
       }
-      if (!isJoined && distance <= 300) {
+      if (!isJoined && distance / 1000 <= 300) {
         document.getElementById("buttonJoinRoom").classList.remove("hidden");
       } else {
         if (!document.getElementById("buttonJoinRoom").classList.contains("hidden")) {
@@ -563,6 +567,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (!document.getElementById("textEditor").classList.contains("hidden")) {
           document.getElementById("textEditor").classList.add("hidden");
         }
+        if (!document.getElementById("consultation-informasion").classList.contains("hidden")) {
+          document.getElementById("consultation-informasion").classList.add("hidden");
+        }
         document.getElementById("waitingRoomAfter").classList.remove("hidden");
       } else {
         if (!document.getElementById("waitingRoomAfter").classList.contains("hidden")) {
@@ -571,6 +578,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById("chat").classList.remove("hidden");
         document.getElementById("video").classList.remove("hidden");
         document.getElementById("textEditor").classList.remove("hidden");
+        document.getElementById("consultation-informasion").classList.remove("hidden");
       }
     }
 
